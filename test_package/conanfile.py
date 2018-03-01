@@ -1,5 +1,5 @@
 from conans.model.conan_file import ConanFile
-from conans import CMake, ConfigureEnvironment
+from conans import CMake, tools
 import os
 
 ############### CONFIGURE THESE VALUES ##################
@@ -18,13 +18,13 @@ class DefaultNameConan(ConanFile):
     generators = "cmake"
     requires = "libxml2/2.9.3@%s/%s" % (username, channel)
 
-    def config(self):
+    def configuration(self):
         del self.settings.compiler.libcxx
 
     def build(self):
-        cmake = CMake(self.settings)
-        self.run('cmake %s %s' % (self.conanfile_directory, cmake.command_line))
-        self.run("cmake --build . %s" % cmake.build_config)
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
 
     def imports(self):
         self.copy(pattern="*.dll", dst="bin", src="bin")
